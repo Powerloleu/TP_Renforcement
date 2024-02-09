@@ -1,0 +1,28 @@
+// MDP
+digraph {
+	size="10,10"
+	node [shape=circle]
+	edge [fontsize=10]
+	S0 [label=S0]
+	S1 [label=S1]
+	S2 [label=S2]
+	S0 -> S0 [label=0.1 color=black style=solid]
+	S0 -> S1 [label=0.5 color=black style=solid]
+	S0 -> S2 [label=0.4 color=black style=solid]
+	S1 -> S0 [label="a, 0.2" color=blue style=dashed]
+	S1 -> S1 [label="a, 0.3" color=blue style=dashed]
+	S1 -> S2 [label="a, 0.5" color=blue style=dashed]
+	S1 -> S0 [label="b, 0.4" color=red style=dotted]
+	S1 -> S1 [label="b, 0.4" color=red style=dotted]
+	S1 -> S2 [label="b, 0.2" color=red style=dotted]
+	S2 -> S0 [label=0.3 color=black style=solid]
+	S2 -> S1 [label=0.3 color=black style=solid]
+	S2 -> S2 [label=0.4 color=black style=solid]
+	{
+		rank=sink
+		legend [label="Legenda:
+Solid - NA
+Dashed - a
+Dotted - b" shape=plaintext]
+	}
+}
