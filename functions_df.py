@@ -3,6 +3,8 @@ from graphviz import Digraph
 import numpy as np
 import tkinter as tk
 from tkinter import messagebox
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 data = {
     "Origin": ["S0", "S1", "S1", "S2"],
