@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import messagebox
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from mdp import run as run_mdp
 
 # data = {
 #     "Origin": ["S0", "S1", "S1", "S2"],
@@ -14,7 +15,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 #     "S2": [0.4, 0.5, 0.2, 0.4]
 # }
 
-# Estados e ações disponíveis
+'''# Estados e ações disponíveis
 estados = ["S6", "S1", "S2", "S3", "S4", "S5"]
 acoes = ["NA", "a", "b", "c"]
 
@@ -36,7 +37,12 @@ for estado_origem in estados:
 
 # Ajustando o index para melhor visualização
 df.reset_index(drop=True, inplace=True)
+'''
 
+
+# Puxando df do mdp
+printer = run_mdp(path = "mdp_graph.mdp", return_printer=True)
+df = printer.transactions_prob
 
 
 class RandomWalkApp(tk.Tk):
@@ -48,15 +54,15 @@ class RandomWalkApp(tk.Tk):
         self.df = df  # O DataFrame deve ser passado como argumento
 
         # Determina o estado inicial como o menor 'S' se 'S0' não existir
-        if "S0" not in df['Origin'].unique():
+        # TODO Lembrar de alterar essa parte para algo mais robusto, e se o estado virar "state0"? 
+        if "S0" not in printer.declared_states:
             # Extrai os números dos estados, assume que o formato é sempre 'S' seguido por um número
-            state_numbers = [int(s[1:]) for s in df['Origin'].unique() if s.startswith('S')]
+            state_numbers = [int(s[1:]) for s in printer.declared_states if s.startswith('S')]
             min_state_number = min(state_numbers)
             self.current_state = f"S{min_state_number}"
         else:
             self.current_state = "S0"
             
-
 
         self.path = [self.current_state]
         self.total_probability = 1.0
