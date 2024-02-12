@@ -41,7 +41,7 @@ df.reset_index(drop=True, inplace=True)
 
 
 # Puxando df do mdp
-printer = run_mdp(path = "mdp_graph.mdp", return_printer=True)
+printer = run_mdp(path = "correct_ex.mdp", return_printer=True)
 df = printer.transactions_prob
 
 
