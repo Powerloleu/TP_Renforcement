@@ -1,4 +1,4 @@
-from matplotlib.patches import FancyArrowPatch
+from matplotlib.patches import FancyArrowPatch, Circle
 import pandas as pd
 import numpy as np
 import tkinter as tk
@@ -7,56 +7,16 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from mdp import run as run_mdp
 
-# data = {
-#     "Origin": ["S0", "S1", "S1", "S2"],
-#     "Action": ["NA", "a", "b", "NA"],
-#     "S0": [0.1, 0.2, 0.4, 0.3],
-#     "S1": [0.5, 0.3, 0.4, 0.3],
-#     "S2": [0.4, 0.5, 0.2, 0.4]
-# }
-
-'''# Estados e ações disponíveis
-estados = ["S6", "S1", "S2", "S3", "S4", "S5"]
-acoes = ["NA", "a", "b", "c"]
-
-# Criando o DataFrame com estados como colunas e uma coluna adicional para ações
-df = pd.DataFrame(columns=["Origin", "Action"] + estados)
-
-# Adicionando as linhas ao DataFrame
-for estado_origem in estados:
-    # Decidindo aleatoriamente as ações disponíveis para cada estado, exceto S0
-    # Garantindo que pelo menos uma ação seja selecionada e sem repetição
-    acoes_disponiveis = np.random.choice(acoes[1:], np.random.randint(1, 4), replace=False).tolist()
-
-    for acao in acoes_disponiveis:
-        # Gerando probabilidades aleatórias para cada estado de chegada
-        probabilidades = np.random.dirichlet(np.ones(len(estados)), size=1)[0]
-        # Adicionando estado de origem, ação e probabilidades ao DataFrame
-        linha = [estado_origem, acao] + probabilidades.tolist()
-        df.loc[len(df)] = linha
-
-# Ajustando o index para melhor visualização
-df.reset_index(drop=True, inplace=True)
-'''
-
-
-# Puxando df do mdp
-printer = run_mdp(path = "correct_ex.mdp", return_printer=True)
-df = printer.transactions_prob
-
 
 class RandomWalkApp(tk.Tk):
-    def __init__(self, df):
+    def __init__(self, printer):
         super().__init__()
         self.title("Random Walk Visualization")
         self.geometry("800x600")
 
-        self.df = df  # O DataFrame deve ser passado como argumento
+        self.df = printer.transactions_prob  
 
-        # Determina o estado inicial como o menor 'S' se 'S0' não existir
-        # TODO Lembrar de alterar essa parte para algo mais robusto, e se o estado virar "state0"? 
         if "S0" not in printer.declared_states:
-            # Extrai os números dos estados, assume que o formato é sempre 'S' seguido por um número
             state_numbers = [int(s[1:]) for s in printer.declared_states if s.startswith('S')]
             min_state_number = min(state_numbers)
             self.current_state = f"S{min_state_number}"
@@ -71,7 +31,6 @@ class RandomWalkApp(tk.Tk):
         self.create_widgets()
         self.create_graph()
 
-        # Inicializa a aplicação com as ações disponíveis para o estado inicial
         self.initialize_actions()
 
     def create_widgets(self):
@@ -93,42 +52,43 @@ class RandomWalkApp(tk.Tk):
     def create_graph(self):
         self.figure = Figure(figsize=(5, 4), dpi=100)
         self.plot = self.figure.add_subplot(111)
-        self.plot.axis('off')  # Esconda os eixos para focar nos estados
+        self.plot.axis('off') 
         
-        self.canvas = FigureCanvasTkAgg(self.figure, self)  # Crie um canvas de matplotlib no Tkinter
+        self.canvas = FigureCanvasTkAgg(self.figure, self)  
         self.canvas_widget = self.canvas.get_tk_widget()
         self.canvas_widget.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         self.update_graph()
     
     def draw_arrow(self, start_pos, end_pos, radius=0.05):
-        """
-        Desenha uma seta do start_pos ao limite externo do círculo em end_pos,
-        considerando o raio do círculo.
-        """
-        # Calcula a direção da seta
         direction = np.array(end_pos) - np.array(start_pos)
-        norm = np.linalg.norm(direction)
+        if np.array_equal(start_pos, end_pos):
+            # Draw a circular arrow
+            circle = Circle(start_pos, radius, fill=False, color='k', linewidth=2)
+            self.plot.add_patch(circle)
 
+        norm = np.linalg.norm(direction)
+        
         if norm == 0:
             return
 
         direction = direction / norm
-
-        # Ajusta o ponto final para terminar no contorno do círculo, não no centro
         adjusted_start_pos = np.array(start_pos) + direction * radius
         adjusted_end_pos = np.array(end_pos) - direction * radius
 
-        # Cria e adiciona a seta ao plot
-        arrow = FancyArrowPatch(adjusted_start_pos, adjusted_end_pos, arrowstyle='->', color='k', mutation_scale=20, linewidth=2)
+        arrow = FancyArrowPatch(adjusted_start_pos, 
+                                adjusted_end_pos, 
+                                arrowstyle='->', 
+                                color='k', 
+                                mutation_scale=20, 
+                                linewidth=2)
         self.plot.add_patch(arrow)
 
     def update_graph(self):
         self.plot.clear()
         self.plot.axis('off')
-
-        radius = 0.2  # Valor ajustado do raio de distancia do centro às bolinhas dos estados.
-        circle_radius = 0.06 # raio de cada bolinha.
+        radius = 0.2  
+        circle_radius = 0.06 
 
         num_states = len(self.df['Origin'].unique())
         angles = np.linspace(0, 2 * np.pi, num_states, endpoint=False)
@@ -138,17 +98,12 @@ class RandomWalkApp(tk.Tk):
             self.plot.scatter(*pos, s=1000, label=state if state == self.current_state else "")
             self.plot.text(pos[0], pos[1], state, horizontalalignment='center', verticalalignment='center')
 
-        # Desenhar apenas a última seta de transição
+        # Draw the last transition
         if len(self.path) > 1:
-            # Pegue os dois últimos estados no caminho para desenhar a seta
             start_pos = state_positions[self.path[-2]]
             end_pos = state_positions[self.path[-1]]
             
-            # Desenhe a seta da última transição
             self.draw_arrow(start_pos, end_pos, circle_radius)
-
-
-        # Ou defina os limites manualmente para centralizar melhor os estados
         self.plot.set_xlim(-0.3, 0.3)
         self.plot.set_ylim(-0.3, 0.3)
 
@@ -170,8 +125,7 @@ class RandomWalkApp(tk.Tk):
         
         self.perform_action()
 
-    def initialize_actions(self):
-        # Atualiza os botões de ação com as ações disponíveis para o estado inicial
+    def initialize_actions(self): # Refresh actions buttons 
         available_actions = self.df[self.df['Origin'] == self.current_state]['Action'].unique()
         self.update_action_buttons(available_actions)
 
@@ -196,12 +150,12 @@ class RandomWalkApp(tk.Tk):
         step_probability = probabilities[next_state_index]
 
         self.transition_count += 1
-        self.current_state = next_state  # Atualiza o estado atual mesmo que seja o mesmo
-        self.path.append(self.current_state)  # Adiciona o estado ao caminho mesmo que seja uma repetição
+        self.current_state = next_state  
+        self.path.append(self.current_state)  
         self.total_probability *= step_probability
 
         self.update_graph()
-        self.update_state_label(step_probability)  # Atualiza o label após cada ação
+        self.update_state_label(step_probability)  
 
         available_actions = self.df[self.df['Origin'] == self.current_state]['Action'].unique()
         self.update_action_buttons(available_actions)
@@ -212,10 +166,10 @@ class RandomWalkApp(tk.Tk):
             path_info += f"\nProbability of the last step: {step_probability:.4f}"
         path_info += f"\nTotal Probability: {self.total_probability:.4f}\nTransitions: {self.transition_count}"
         self.path_label.config(text=path_info)
-        self.update()  # Força a atualização da UI
+        self.update()  
 
-# Substitua 'df' com seu DataFrame real
 if __name__ == "__main__":
-    # Exemplo de DataFrame
-    app = RandomWalkApp(df)
+    printer = run_mdp(path = "correct_ex.mdp", return_printer=True)
+    app = RandomWalkApp(printer)
     app.mainloop()
+    print(app.path) # We could return it if we wanted

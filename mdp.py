@@ -3,9 +3,27 @@ from gramLexer import gramLexer
 from gramListener import gramListener
 from gramParser import gramParser
 import pandas as pd
-import sys
-import io
 
+'''
+We modified the gramPrintListener class, adding the attributes:
+- declared_states -> All states declared in the begining.
+- declared_actions -> All actions declared in the begining.
+- states_with_no_action_trans -> States without action 
+- defined_state_actions -> All couples state actions defined
+- transactions -> Dataframe representind a 3D matrix with weights to each state from a couple 
+                  state action (or no action).NA values means that the actions doesnt lead 
+                  to this state.
+- transactions_prob -> Same dataframe as before converting weights to probabilities, sum being 1. 
+                       NAs are set to zero, since it's what they mean .
+
+We divided the main into "run" and "main". So that we can specify when running:
+- The path where the file .mdp is
+- If we should return the printer instance or not (Then being able to collect the data instead of just reading it)
+
+We added verification functions to raise an error if the .mdp:
+- Duplicates in definition the same couple (state, action)
+- Defines a state with both an action and no action 
+'''
         
 class gramPrintListener(gramListener):
 
@@ -25,9 +43,7 @@ class gramPrintListener(gramListener):
         df = self.transactions.copy()
         df.fillna(0, inplace = True) 
         df.iloc[:, 2:] = df.iloc[:, 2:].div(df.iloc[:, 2:].sum(axis=1), axis='rows') # Transform weights in probabilities
-        print(df.head(10))
         self.transactions_prob = df
-
         
     def enterDefstates(self, ctx):
         states = [str(x) for x in ctx.ID()]
@@ -84,7 +100,7 @@ class gramPrintListener(gramListener):
         new_record = pd.DataFrame([new_trans_data])
         self.transactions = pd.concat([self.transactions, new_record], ignore_index=True)       
 
-def run(path = "correct_ex.mdp", return_printer = False):
+def run(path = "correct_ex.mdp", return_printer = False, print_transactions = False):
     #lexer = gramLexer(StdinStream())
     lexer = gramLexer(FileStream(path))
     stream = CommonTokenStream(lexer)
@@ -93,13 +109,17 @@ def run(path = "correct_ex.mdp", return_printer = False):
     printer = gramPrintListener()
     walker = ParseTreeWalker()
     walker.walk(printer, tree)
-    printer.update_transactions_prob()
-    
+    printer.update_transactions_prob() 
+    if print_transactions:
+        print("------- transactions df -------")
+        print(printer.transactions.head(10))
+        print("------- transactions_prob df -------")
+        print(printer.transactions_prob.head(10))
     if return_printer:
         return printer
 
 def main():
-    run()
+    run(print_transactions = True)
 
 
 if __name__ == '__main__':
