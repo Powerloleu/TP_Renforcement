@@ -34,7 +34,10 @@ class gramPrintListener(gramListener):
         self.defined_state_actions = {}
         self.transactions = None
         self.transactions_prob = False
-        
+        self.first_state = None
+        self.warnings = []
+        self.errors = []
+
     def createTransactions(self):
         columns_names = ['Origin', 'Action'] + list(self.declared_states)
         self.transactions = pd.DataFrame(columns=columns_names)
@@ -49,6 +52,8 @@ class gramPrintListener(gramListener):
         states = [str(x) for x in ctx.ID()]
         self.declared_states.update(states)
         print("States: %s" % states)
+        if self.first_state is None:
+            self.first_state = states[0]
 
     def enterDefactions(self, ctx):
         actions = [str(x) for x in ctx.ID()]
@@ -62,15 +67,22 @@ class gramPrintListener(gramListener):
         act = ids.pop(0)
         
         if (dep, act) in self.defined_state_actions:
-            raise ValueError(f"Error: State {dep} with action {act} has already been defined.")
-            
+            self.warnings.append(f"State {dep} with action {act} has already been defined, using te first one.")
+            return
+
         self.defined_state_actions[(dep, act)] = True
         if dep in self.states_with_no_action_trans:
-            raise ValueError(f"Error: State {dep} cannot have an action since a no-action distribution has already been assigned.")
-            
-        if dep not in self.declared_states or act not in self.declared_actions:
-            raise ValueError(f"Error: Undeclared state or action in transition: {dep} with action {act}")
-            
+            self.errors.append(f"State {dep} cannot have the action {act} since a no-action distribution has already been assigned, using the no-action only.")
+            return 
+                    
+        if dep not in self.declared_states:
+            self.warnings.append(f"Undeclared state in transition: {dep} with action {act}, declared automaticaly")
+            self.declared_states.update(dep)
+        
+        if act not in self.declared_actions:
+            self.warnings.append(f"Undeclared action in transition: {dep} with action {act}, declared automaticaly")
+            self.declared_actions.update(act)
+
         weights = [int(str(x)) for x in ctx.INT()]
         print("Transition from " + dep + " with action "+ act + " and targets " + str(ids) + " with weights " + str(weights))
         
@@ -85,12 +97,15 @@ class gramPrintListener(gramListener):
             
         ids = [str(x) for x in ctx.ID()]
         dep = ids.pop(0)
+
         if dep not in self.declared_states:
-            raise ValueError(f"Error: Undeclared state in transition: {dep}")
+            self.warnings.append(f"Undeclared state in transition: {dep}, declared automaticaly")
+            self.declared_states.update(dep)
 
         if dep in self.states_with_no_action_trans:
-            raise ValueError(f"Error: State {dep} cannot have multiple no-action distributions.")
-            
+            self.errors.append(f"State {dep} cannot have multiple no-action distributions, using the first one.")
+            return
+        
         self.states_with_no_action_trans.add(dep)
         weights = [int(str(x)) for x in ctx.INT()]
         print("Transition from " + dep + " with no action and targets " + str(ids) + " with weights " + str(weights))
@@ -100,7 +115,7 @@ class gramPrintListener(gramListener):
         new_record = pd.DataFrame([new_trans_data])
         self.transactions = pd.concat([self.transactions, new_record], ignore_index=True)       
 
-def run(path = "correct_ex.mdp", return_printer = False, print_transactions = False):
+def run(path = "ex.mdp", return_printer = False, print_transactions = False):
     #lexer = gramLexer(StdinStream())
     lexer = gramLexer(FileStream(path))
     stream = CommonTokenStream(lexer)
@@ -117,6 +132,15 @@ def run(path = "correct_ex.mdp", return_printer = False, print_transactions = Fa
         print(printer.transactions_prob.head(10))
     if return_printer:
         return printer
+    if printer.warnings: # If there are warnings in the list
+        print('---------- WARNINGS WHEN PARSING -----------')
+        for i, warning in enumerate(printer.warnings):
+            print(f"( {i} ) - {warning}")
+    if printer.errors: # If there are errors in the list
+        print('---------- ERRORS WHEN PARSING -----------')
+        for i, error in enumerate(printer.errors):
+            print(f"( {i} ) - {error}")
+        print('---------- Continuing the code with suggested corrections -----------')
 
 def main():
     run(print_transactions = True)
