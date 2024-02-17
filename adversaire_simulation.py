@@ -33,8 +33,12 @@ def simular_random_walk(p):
     
     df = p.transactions_prob
 
-    print("\n="*20 + " # " + "="*20)
-    adversaire_mode = input("\n Let us build and Adversaire to decide the actions, you can choose between 'input' to input your preferences or 'random' to have a random permuatation of the possible actions: ")
+    print("\n" + "="*20 + " # " + "="*20)
+    adversaire_mode = input(
+        "Let us build an Adversaire to decide the actions. \n"
+        "You can choose between: \n"
+        "- 'input' to input your preferences \n"
+        "- 'random' to have a random permutation of the possible actions: ")
     num_transitions = int(input("\n Please choose the number of transitions for this random walk: "))
 
 
