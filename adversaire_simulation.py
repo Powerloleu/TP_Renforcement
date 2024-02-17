@@ -50,7 +50,7 @@ def simular_random_walk(p):
     caminho = estado_atual  # Iniciar o registro do caminho com o estado inicial
     probabilidade_acumulada = 1
 
-    print(f"Inicial State: {estado_atual}")
+    print(f"Inicial State: {estado_atual}" + "\n")
 
     for _ in range(num_transitions):
         df_estado_atual = df[df['Origin'] == estado_atual]
@@ -78,7 +78,7 @@ def simular_random_walk(p):
         estado_atual = proximo_estado
         caminho += f" -> {estado_atual}"  # Atualizar o caminho
 
-        print(f"Origin: {estado_passado}, Action: {acao_selecionada}, Destiny: {estado_atual}, Prob of next step: {probabilidade_escolhida:.3f}, Prob path up to here: {probabilidade_acumulada:.5f}, Path: {caminho}," + "\n")
+        print(f"{estado_passado} -> {estado_atual}; action: {acao_selecionada}, probability of step  {probabilidade_escolhida:.3f}; path's total probability {probabilidade_acumulada:.5f}, path: {caminho}," + "\n")
 
     print(f"Complete Path: {caminho}")
 
