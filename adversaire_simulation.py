@@ -41,7 +41,7 @@ def simular_random_walk(p):
     preferencias = gerar_preferencias_acoes(p.declared_states, p.declared_actions, modo=adversaire_mode)
     print("Preferências de ações (modo random):", preferencias, "\n")
 
-    estado_atual = random.choice(list(p.declared_states))  #TODO : mudar isso aqui para pegar o primeiro do REMI.
+    estado_atual = p.first_state
 
     caminho = estado_atual  # Iniciar o registro do caminho com o estado inicial
     probabilidade_acumulada = 1
