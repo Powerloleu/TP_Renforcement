@@ -43,7 +43,7 @@ def simular_random_walk(p):
 
 
     preferencias = gerar_preferencias_acoes(p.declared_states, p.declared_actions, modo=adversaire_mode)
-    print("Preferências de ações (modo random):", preferencias, "\n")
+    print("Here are the prefered actions for each state :", preferencias, "\n")
 
     estado_atual = p.first_state
 
