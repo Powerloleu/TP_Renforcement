@@ -77,11 +77,11 @@ class gramPrintListener(gramListener):
                     
         if dep not in self.declared_states:
             self.warnings.append(f"Undeclared state in transition: {dep} with action {act}, declared automaticaly")
-            self.declared_states.update(dep)
+            self.declared_states.update([dep])
         
         if act not in self.declared_actions:
             self.warnings.append(f"Undeclared action in transition: {dep} with action {act}, declared automaticaly")
-            self.declared_actions.update(act)
+            self.declared_actions.update([act])
 
         weights = [int(str(x)) for x in ctx.INT()]
         print("Transition from " + dep + " with action "+ act + " and targets " + str(ids) + " with weights " + str(weights))
@@ -100,7 +100,7 @@ class gramPrintListener(gramListener):
 
         if dep not in self.declared_states:
             self.warnings.append(f"Undeclared state in transition: {dep}, declared automaticaly")
-            self.declared_states.update(dep)
+            self.declared_states.update([dep])
 
         if dep in self.states_with_no_action_trans:
             self.errors.append(f"State {dep} cannot have multiple no-action distributions, using the first one.")

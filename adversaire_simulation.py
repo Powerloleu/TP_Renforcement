@@ -5,26 +5,30 @@ import random
 
 printer = run_mdp(path = "correct_ex.mdp", return_printer=True, print_transactions=True)
 
-def gerar_preferencias_acoes(estados, acoes, modo="input"):
+def gerar_preferencias_acoes(df, estados, acoes, modo="input"):
     preferencias = {}
 
     for estado in estados:
+        acoes_possiveis = df[df['Origin'] == estado]['Action'].unique()
+        
+        # Filtrar ações possíveis que não sejam 'NA', caso existam
+        acoes_validas = [acao for acao in acoes_possiveis if acao != "NA"]
+        
         if modo == "input":
-            print(f"\nCurrent State: {estado}")
-            print("Possible Actions " + ", ".join(acoes))
-            preferencia_str = input(f"Type in the actions in prefered order for the State {estado} (separate with commas): ")
-            preferencia_lista = [acao.strip() for acao in preferencia_str.split(",") if acao.strip() in acoes]
-            preferencias[estado] = preferencia_lista
+            # Se houver apenas uma ação válida ou a ação é 'NA', seleção automática
+            if len(acoes_validas) <= 1:
+                preferencias[estado] = acoes_validas if acoes_validas else ["NA"]
+            else:
+                print(f"\nCurrent State: {estado}")
+                print("Possible Actions: " + ", ".join(acoes_validas))
+                preferencia_str = input(f"Type in the actions in preferred order for the State {estado} (separate with commas): ")
+                preferencia_lista = [acao.strip() for acao in preferencia_str.split(",") if acao.strip() in acoes_validas]
+                preferencias[estado] = preferencia_lista
 
         elif modo == "random":
-            acoes_aleatorias = list(acoes)
-            random.shuffle(acoes_aleatorias)
-            preferencias[estado] = acoes_aleatorias
+            random.shuffle(acoes_validas)
+            preferencias[estado] = acoes_validas
             
-        else:
-            print("Choose a mode between: 'input' or 'random'.")
-            return {}
-
     return preferencias
 
 
@@ -42,7 +46,7 @@ def simular_random_walk(p):
     num_transitions = int(input("\n Please choose the number of transitions for this random walk: "))
 
 
-    preferencias = gerar_preferencias_acoes(p.declared_states, p.declared_actions, modo=adversaire_mode)
+    preferencias = gerar_preferencias_acoes(df, p.declared_states,p.declared_actions, modo=adversaire_mode)
     print("Here are the prefered actions for each state :", preferencias, "\n")
 
     estado_atual = p.first_state
