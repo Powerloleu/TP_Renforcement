@@ -6,6 +6,22 @@ import random
 printer = run_mdp(path = "correct_ex.mdp", return_printer=True, print_transactions=True)
 
 def gerar_preferencias_acoes(df, estados, acoes, modo="input"):
+    """
+    Generates a dictionary mapping each state to a list of preferred actions.
+
+    This function allows for the specification of action preferences for each state
+    within a Markov Decision Process (MDP), either through direct user input or
+    by generating a random order of actions.
+
+    Parameters:
+    - df (pandas.DataFrame): A DataFrame containing the transition probabilities for each state-action pair.
+    - estados (list): A list of all states declared in the MDP.
+    - acoes (list): A list of all actions declared in the MDP.
+    - modo (str): The mode of preference generation, either 'input' for user-defined preferences or 'random' for automatically generated preferences.
+
+    Returns:
+    - dict: A dictionary where keys are states and values are lists of actions, ordered by preference.
+    """
     preferencias = {}
 
     for estado in estados:
@@ -33,8 +49,20 @@ def gerar_preferencias_acoes(df, estados, acoes, modo="input"):
 
 
 def simular_random_walk(p):
-    # "p" is a printer object
-    
+    """
+    Simulates a random walk through an MDP based on action preferences and transition probabilities.
+
+    This function simulates traversing through a Markov Decision Process, making decisions at each state
+    based on predefined or user-specified action preferences. It illustrates the potential path an agent
+    might take, considering the MDP's transition probabilities for each action.
+
+    Parameters:
+    - p: An object containing the MDP structure, including its states, actions, transition probabilities, and other relevant data.
+
+    Returns:
+    - None: This function does not return a value but prints the simulation results, including the traversed path, actions taken, probabilities of transitions, and the total path probability.
+    """
+        
     df = p.transactions_prob
 
     print("\n" + "="*20 + " # " + "="*20)
