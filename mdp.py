@@ -90,6 +90,9 @@ class gramPrintListener(gramListener):
         new_trans_data.update({'Origin' : dep, 'Action' : act})
         new_record = pd.DataFrame([new_trans_data])
         self.transactions = pd.concat([self.transactions, new_record], ignore_index=True)
+        desired_columns_order = ['Origin', 'Action'] + [col for col in self.transactions.columns if col not in ['Origin', 'Action']]
+        self.transactions = self.transactions[desired_columns_order]
+
 
     def enterTransnoact(self, ctx):
         if self.transactions is None:
@@ -115,7 +118,7 @@ class gramPrintListener(gramListener):
         new_record = pd.DataFrame([new_trans_data])
         self.transactions = pd.concat([self.transactions, new_record], ignore_index=True)       
 
-def run(path = "correct_ex.mdp", return_printer = False, print_transactions = False):
+def run(path = "new_correct_ex.mdp", return_printer = False, print_transactions = False):
     #lexer = gramLexer(StdinStream())
     lexer = gramLexer(FileStream(path))
     stream = CommonTokenStream(lexer)
