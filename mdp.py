@@ -125,25 +125,29 @@ def run(path = "correct_ex.mdp", return_printer = False, print_transactions = Fa
     walker = ParseTreeWalker()
     walker.walk(printer, tree)
     printer.update_transactions_prob() 
+
     if print_transactions:
-        print("------- transactions df -------")
+        print("\n","------- transactions df -------", "\n")
         print(printer.transactions.head(10))
-        print("------- transactions_prob df -------")
-        print(printer.transactions_prob.head(10))
-    if return_printer:
-        return printer
+        print("\n","------- transactions_prob df -------","\n")
+        print(printer.transactions_prob.head(10), "\n",)
+    
     if printer.warnings: # If there are warnings in the list
         print('---------- WARNINGS WHEN PARSING -----------')
         for i, warning in enumerate(printer.warnings):
             print(f"( {i} ) - {warning}")
+
     if printer.errors: # If there are errors in the list
         print('---------- ERRORS WHEN PARSING -----------')
         for i, error in enumerate(printer.errors):
             print(f"( {i} ) - {error}")
         print('---------- Continuing the code with suggested corrections -----------')
 
+    if return_printer:
+        return printer
+
 def main():
-    run(print_transactions = True)
+    run(print_transactions = True, return_printer=True)
 
 
 if __name__ == '__main__':

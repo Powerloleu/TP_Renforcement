@@ -3,7 +3,7 @@ import numpy as np
 from mdp import run as run_mdp
 import random
 
-printer = run_mdp(path = "correct_ex.mdp", return_printer=True)
+printer = run_mdp(path = "correct_ex.mdp", return_printer=True, print_transactions=True)
 
 def gerar_preferencias_acoes(estados, acoes, modo="input"):
     preferencias = {}
