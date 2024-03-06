@@ -4,7 +4,7 @@ from graphviz import Digraph
 import numpy as np
 import random
 
-printer = run_mdp(path = "mdp_examples//multiple_no_actions.mdp", return_printer=True, print_transactions=True)
+printer = run_mdp(path = "mdp_examples//Teste_grande_v1.mdp", return_printer=True, print_transactions=True)
 
 df = printer.transactions_prob
 
@@ -12,7 +12,7 @@ df = printer.transactions_prob
 dot = Digraph(comment='MDP', format='png')
 
 # Configurações do gráfico
-dot.attr(size='8,5')
+dot.attr(size='50,50')
 dot.attr('node', shape='circle', width='1', height='1', fontsize='12')
 dot.attr('edge', fontsize='10', style='solid')
 
