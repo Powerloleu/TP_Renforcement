@@ -138,7 +138,6 @@ class RandomWalkApp(tk.Tk):
 
         probabilities = transition[self.declared_states].values.flatten()
         next_state = np.random.choice(self.declared_states, p=probabilities)
-        print(transition)
         step_probability = float(transition[next_state].iloc[0])
 
         self.transition_count += 1
