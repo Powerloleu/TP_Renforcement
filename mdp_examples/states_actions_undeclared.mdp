@@ -1,0 +1,7 @@
+States D, E;
+Actions f, g;
+D -> 5:E;
+D[f] -> 3:D + 7:E;
+E[g] -> 6:D + 4:E;
+F -> 2:D + 8:E;
+E[h] -> 1:D + 9:E;

@@ -18,7 +18,7 @@ def plot_transactions(printer):
         for target in printer.declared_states:
             weight = row[target]
             if weight > 0:
-                subgraph.add_edge(origin, target, weight=weight)
+                subgraph.add_edge(origin, target, weight=round(weight, 2))
 
         subgraphs.append((subgraph, origin, action))
 
@@ -39,7 +39,7 @@ def plot_transactions(printer):
     plt.show()
 
 def main():
-    printer = run_mdp(path="correct_ex.mdp", return_printer=True)
+    printer = run_mdp(path="mdp_examples//action_no_action_state.mdp", return_printer=True)
     plot_transactions(printer)
 
 if __name__=="__main__":

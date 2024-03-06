@@ -1,0 +1,7 @@
+States G, H, I;
+Actions j, k, l;
+G -> 3:H + 7:I;
+H[j] -> 4:G + 6:I;
+I[k] -> 5:G + 5:H;
+G -> 4:G + 6:H;
+H -> 2:I + 8:G;

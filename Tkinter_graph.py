@@ -15,19 +15,11 @@ class RandomWalkApp(tk.Tk):
         self.geometry("800x600")
 
         self.df = printer.transactions_prob  
-
-        if "S0" not in printer.declared_states:
-            state_numbers = [int(s[1:]) for s in printer.declared_states if s.startswith('S')]
-            min_state_number = min(state_numbers)
-            self.current_state = f"S{min_state_number}"
-        else:
-            self.current_state = "S0"
-            
-
+        self.current_state = printer.first_state
         self.path = [self.current_state]
         self.total_probability = 1.0
         self.transition_count = 0
-        
+        self.declared_states = printer.declared_states
         self.create_widgets()
         self.create_graph()
 
@@ -90,9 +82,9 @@ class RandomWalkApp(tk.Tk):
         radius = 0.2  
         circle_radius = 0.06 
 
-        num_states = len(self.df['Origin'].unique())
+        num_states = len(self.declared_states)
         angles = np.linspace(0, 2 * np.pi, num_states, endpoint=False)
-        state_positions = {f"S{i}": (radius * np.cos(ang), radius * np.sin(ang)) for i, ang in enumerate(angles)}
+        state_positions = {self.declared_states[i] : (radius * np.cos(ang), radius * np.sin(ang)) for i, ang in enumerate(angles)}
 
         for state, pos in state_positions.items():
             self.plot.scatter(*pos, s=1000, label=state if state == self.current_state else "")
@@ -127,33 +119,31 @@ class RandomWalkApp(tk.Tk):
 
     def initialize_actions(self): # Refresh actions buttons 
         available_actions = self.df[self.df['Origin'] == self.current_state]['Action'].unique()
+        if not available_actions: # The list is empty, not even a NA
+            messagebox.showinfo(f"There are no valid transitions from the state {self.current_state}.")
+            return
         self.update_action_buttons(available_actions)
 
     def perform_action(self, action=None):
         if self.transition_count == 0 or action is not None:
             self.action = action
 
-        transitions = self.df[(self.df['Origin'] == self.current_state) & ((self.df['Action'] == self.action) | (self.df['Action'] == 'NA'))]
+        transition = self.df[(self.df['Origin'] == self.current_state) & ((self.df['Action'] == self.action) | (self.df['Action'] == 'NA'))]
         
 
-        if transitions.empty:
+        if transition.empty:
             messagebox.showinfo("Random Walk", "There are no valid transitions from this state.")
             return
 
-        state_columns = [col for col in self.df.columns if col.startswith('S')]
-        probabilities = transitions[state_columns].values.flatten()
-        probabilities = probabilities / probabilities.sum()
-
-        next_state_index = np.random.choice(len(state_columns), p=probabilities)
-        next_state = state_columns[next_state_index]
-
-        step_probability = probabilities[next_state_index]
+        probabilities = transition[self.declared_states].values.flatten()
+        next_state = np.random.choice(self.declared_states, p=probabilities)
+        print(transition)
+        step_probability = float(transition[next_state].iloc[0])
 
         self.transition_count += 1
         self.current_state = next_state  
         self.path.append(self.current_state)  
         self.total_probability *= step_probability
-
         self.update_graph()
         self.update_state_label(step_probability)  
 
@@ -163,13 +153,13 @@ class RandomWalkApp(tk.Tk):
     def update_state_label(self, step_probability=None):
         path_info = f"Current State: {self.current_state}\nPath: {' -> '.join(self.path)}"
         if step_probability is not None:
-            path_info += f"\nProbability of the last step: {step_probability:.4f}"
-        path_info += f"\nTotal Probability: {self.total_probability:.4f}\nTransitions: {self.transition_count}"
+            path_info += f"\nProbability of the last step: {round(step_probability,4)}"
+        path_info += f"\nTotal Probability: {round(self.total_probability, 8)}\nTransitions: {self.transition_count}"
         self.path_label.config(text=path_info)
         self.update()  
 
 if __name__ == "__main__":
-    printer = run_mdp(path = "correct_ex.mdp", return_printer=True)
+    printer = run_mdp(path = "mdp_examples//state_with_without_action.mdp", return_printer=True, print_transactions=True, print_states=True)
     app = RandomWalkApp(printer)
     app.mainloop()
-    print(app.path) # We could return it if we wanted
+    print(f"Path: {app.path}") # We could return it if we wanted
