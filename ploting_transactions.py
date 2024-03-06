@@ -39,7 +39,7 @@ def plot_transactions(printer):
     plt.show()
 
 def main():
-    printer = run_mdp(path="prof_examples//Teste_grande_v1.mdp", return_printer=True)
+    printer = run_mdp(path="prof_examples//fichier3-mdp.mdp", return_printer=True)
     plot_transactions(printer)
 
 if __name__=="__main__":

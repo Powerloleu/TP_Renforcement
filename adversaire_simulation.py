@@ -3,7 +3,7 @@ import numpy as np
 from mdp import run as run_mdp
 import random
 
-printer = run_mdp(path = "prof_examples//Teste_grande_v1.mdp", return_printer=True, print_transactions=True)
+printer = run_mdp(path = "prof_examples//simu-mc.mdp", return_printer=True, print_transactions=True)
 
 def gerar_preferencias_acoes(df, estados, acoes, modo="input"):
     """
