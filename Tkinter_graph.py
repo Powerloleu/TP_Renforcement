@@ -26,7 +26,7 @@ class RandomWalkApp(tk.Tk):
         self.initialize_actions()
 
     def create_widgets(self):
-        self.current_state_label = tk.Label(self, text=f"Current State: {self.current_state}")
+        self.current_state_label = tk.Label(self, text=f"First state: {self.current_state}")
         self.current_state_label.pack(pady=10)
         
         self.path_label = tk.Label(self, text=f"Path: {self.current_state}")
@@ -110,15 +110,18 @@ class RandomWalkApp(tk.Tk):
             action_button.pack(side=tk.LEFT)
 
     def start_random_walk(self):
+        
         actions_and_NA = self.df["Action"].loc[self.df['Origin'] == self.current_state].values
-        print(f"actions_and_NA : {actions_and_NA}")
+        if not actions_and_NA: #No transactions
+            messagebox.showinfo("End of graph", f"There are no valid transitions from the state {self.current_state}.")
+            return
         action = random.choice(actions_and_NA)
         self.perform_action(action)
 
     def initialize_actions(self): # Refresh actions buttons 
         available_actions = self.df[self.df['Origin'] == self.current_state]['Action'].unique()
         if not available_actions: # The list is empty, not even a NA
-            messagebox.showinfo(f"There are no valid transitions from the state {self.current_state}.")
+            messagebox.showinfo("End of graph", f"There are no valid transitions from the state {self.current_state}.")
             return
         self.update_action_buttons(available_actions)
 
@@ -130,7 +133,7 @@ class RandomWalkApp(tk.Tk):
         
 
         if transition.empty:
-            messagebox.showinfo("There are no valid transitions from this state.")
+            messagebox.showinfo("End of graph", "There are no valid transitions from this state.")
             return
 
         probabilities = transition[self.declared_states].values.flatten()
@@ -157,7 +160,7 @@ class RandomWalkApp(tk.Tk):
         self.update()  
 
 if __name__ == "__main__":
-    printer = run_mdp(path = "mdp_examples//states_actions_undeclared.mdp", return_printer=True, print_transactions=True, print_states=True)
+    printer = run_mdp(path = "mdp_examples//Teste_grande_v1.mdp", return_printer=True, print_transactions=True, print_states=True)
     app = RandomWalkApp(printer)
     app.mainloop()
     print(f"Path: {app.path}") # We could return it if we wanted
