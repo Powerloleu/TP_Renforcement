@@ -3,7 +3,7 @@ import numpy as np
 from mdp import run as run_mdp
 import random
 
-printer = run_mdp(path = "mdp_examples//multiple_no_actions.mdp", return_printer=True, print_transactions=True)
+printer = run_mdp(path = "mdp_examples//Teste_grande_v1.mdp", return_printer=True, print_transactions=True)
 
 def gerar_preferencias_acoes(df, estados, acoes, modo="input"):
     """
@@ -37,9 +37,10 @@ def gerar_preferencias_acoes(df, estados, acoes, modo="input"):
             else:
                 print(f"\nCurrent State: {estado}")
                 print("Possible Actions: " + ", ".join(acoes_validas))
-                preferencia_str = input(f"Type in the actions in preferred order for the State {estado} (separate with commas): ")
-                preferencia_lista = [acao.strip() for acao in preferencia_str.split(",") if acao.strip() in acoes_validas]
-                preferencias[estado] = preferencia_lista
+                preferred = input(f"Type in the preferred action for {estado} \n").strip()
+                while preferred not in acoes_validas:
+                    preferred = input(f"he inputed action {preferred} isn't available for this state, choose one in {acoes_validas} \n").strip()
+                preferencias[estado] = [preferred]
 
         elif modo == "random":
             random.shuffle(acoes_validas)
@@ -86,6 +87,9 @@ def simular_random_walk(p):
 
     for _ in range(num_transitions):
         df_estado_atual = df[df['Origin'] == estado_atual]
+        if df_estado_atual.empty:
+            print("Stopped at a end of graph state")
+            return
         acao_selecionada = None
         probabilidade_escolhida = None
 

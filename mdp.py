@@ -153,7 +153,7 @@ class gramPrintListener(gramListener):
         self.transactions = pd.concat([self.transactions, new_record], ignore_index=True)       
 
 
-def run(path = "mdp_examples//multiple_no_actions.mdp", return_printer = False, print_transactions = False, print_states = False):
+def run(path = "mdp_examples//lancer_de_pieces.mdp", return_printer = False, print_transactions = False, print_states = False):
     #lexer = gramLexer(StdinStream())
     lexer = gramLexer(FileStream(path))
     stream = CommonTokenStream(lexer)
