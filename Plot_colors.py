@@ -35,7 +35,7 @@ for index, row in df.iterrows():
     origin = row['Origin']
     action = row['Action']
     color = action_colors[action]  # Obtém a cor da ação
-    for destination in df.columns[3:]:  # Ajuste para começar da 4ª coluna, incluindo todos os estados de destino
+    for destination in df.columns[2:]:  # Ajuste para começar da 4ª coluna, incluindo todos os estados de destino
         probability = row[destination]
         if probability > 0:  # Apenas cria arestas para probabilidades maiores que 0
             label = f"{action}, {probability:.2f}"
