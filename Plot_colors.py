@@ -4,9 +4,21 @@ from graphviz import Digraph
 import numpy as np
 import random
 
-printer = run_mdp(path = "prof_examples//simu-mc.mdp", return_printer=True, print_transactions=True)
+printer = run_mdp(path = "prof_examples//fichier3-mdp.mdp", return_printer=True, print_transactions=True)
 
 df = printer.transactions_prob
+
+# data = {
+#     'Origin': ['S1', 'S1', 'S2', 'S2', 'S3', 'S3'],
+#     'Action': ['a', 'b', 'a', 'b', 'a', 'b'],
+#     'S1': [0.0, 0.0, 0.5, 0.0, 0.0, 0.0],
+#     'S2': [0.5, 0.5, 0.0, 0.0, 0.0, 0.0],
+#     'S3': [0.0, 0.0, 0.5, 0.5, 0.0, 0.0],
+#     'S4': [0.5, 0.0, 0.0, 0.5, 0.5, 0.0],
+#     'S5': [0.0, 0.5, 0.0, 0.0, 0.5, 1.0]
+# }
+
+# df = pd.DataFrame(data)
 
 # Inicializa o objeto Graphviz para o gráfico direcionado
 dot = Digraph(comment='MDP', format='png')
