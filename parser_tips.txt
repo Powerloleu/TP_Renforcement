@@ -1,0 +1,4 @@
+1) Go to your conda prompt
+2) Activate your python environment, the one with antlr4
+3) Change directory to the TP_RENFORCEMENT
+4) Run: antlr4 -Dlanguage=Python3 gram.g4

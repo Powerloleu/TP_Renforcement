@@ -1,10 +1,11 @@
 grammar gram;
 
 program
-    : defstates defactions transitions EOF
+    : defstates defrewards? defactions transitions EOF
     ;
 
 defstates : STATES ID (',' ID)* ';';
+defrewards : REWARDS ID ':' INT (',' ID ':' INT)* ';';
 defactions : ACTIONS ID (',' ID)* ';';
 
 transitions : trans (trans)* ;
@@ -21,6 +22,7 @@ transnoact : ID FLECHE INT ':' ID
 
 STATES : 'States';
 ACTIONS : 'Actions' ;
+REWARDS : 'Rewards';
 TRANSITION : 'transition' ;
 DPOINT : ':' ;
 FLECHE : '->';
