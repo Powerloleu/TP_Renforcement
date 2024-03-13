@@ -1,0 +1,21 @@
+// MDP
+digraph {
+	size="15,15"
+	node [fontsize=12 height=1 shape=circle width=1]
+	edge [fontsize=10 style=solid]
+	S0 [label=S0]
+	S1 [label=S1]
+	S2 [label=S2]
+	S0 -> S0 [label=0.1]
+	S0 -> S1 [label=0.5]
+	S0 -> S2 [label=0.4]
+	S1 -> S0 [label="a, 0.2"]
+	S1 -> S1 [label="a, 0.3"]
+	S1 -> S2 [label="a, 0.5"]
+	S1 -> S0 [label="b, 0.4"]
+	S1 -> S1 [label="b, 0.4"]
+	S1 -> S2 [label="b, 0.2"]
+	S2 -> S0 [label=0.3]
+	S2 -> S1 [label=0.3]
+	S2 -> S2 [label=0.4]
+}
