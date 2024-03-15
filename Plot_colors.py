@@ -4,7 +4,7 @@ from graphviz import Digraph
 import numpy as np
 import random
 
-printer = run_mdp(path = "prof_examples//fichier3-mdp.mdp", return_printer=True, print_transactions=True)
+printer = run_mdp(path = "prof_examples//simu-mc.mdp", return_printer=True, print_transactions=True)
 
 df = printer.transactions_prob
 
