@@ -159,7 +159,7 @@ class RandomWalkApp(tk.Tk):
         self.update()  
 
 if __name__ == "__main__":
-    printer = run_mdp(path = "prof_examples//Teste_grande_v1.mdp", return_printer=True, print_transactions=True, print_states=True)
+    printer = run_mdp(path = "prof_examples//fichier1-ex.mdp", return_printer=True, print_transactions=True, print_states=True)
     app = RandomWalkApp(printer)
     app.mainloop()
     print(f"Path: {app.path}") # We could return it if we wanted

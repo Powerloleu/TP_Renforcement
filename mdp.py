@@ -32,6 +32,7 @@ class gramPrintListener(gramListener):
     def __init__(self):
         self.declared_states = []
         self.declared_actions = []
+        self.rewards = {}
         self.states_with_no_action_trans = []
         self.states_with_actions = set()
         self.defined_state_actions = {}
@@ -58,6 +59,22 @@ class gramPrintListener(gramListener):
         print("Initialy declared states: %s" % states)
         if self.first_state is None:
             self.first_state = states[0]
+
+    def enterDefrewards(self, ctx):
+        states = [str(x) for x in ctx.ID()]
+        rewards = [int(str(x)) for x in ctx.INT()]
+        self.declared_states.extend([s for s in states if s not in self.declared_states])
+        for r, s in zip(rewards, states):
+            if s in self.rewards.keys():
+                self.errors.append(f"State {s} reward was assigned multiple times, using the first assignment")
+            else:
+                self.rewards[s] = r
+
+    def update_rewards(self):
+        for s in self.declared_states:
+            if s not in self.rewards.keys():
+                self.warnings.append(f"State {s} reward wasn't assigned, using zero as reward")
+                self.rewards[s] = 0
 
     def enterDefactions(self, ctx):
         actions = [str(x) for x in ctx.ID()]
@@ -153,7 +170,7 @@ class gramPrintListener(gramListener):
         self.transactions = pd.concat([self.transactions, new_record], ignore_index=True)       
 
 
-def run(path = "prof_examples//simu-mdp.mdp", return_printer = False, print_transactions = False, print_states = False):
+def run(path = "mdp_examples//Teste_grande_v1.mdp", return_printer = False, print_transactions = False, print_states = False):
     #lexer = gramLexer(StdinStream())
     lexer = gramLexer(FileStream(path))
     stream = CommonTokenStream(lexer)
@@ -170,6 +187,7 @@ def run(path = "prof_examples//simu-mdp.mdp", return_printer = False, print_tran
         printer.first_state = random.choice(printer.declared_states)
     
     printer.update_transactions_prob() 
+    printer.update_rewards() 
 
     if print_transactions:
         print("\n","------- transactions df -------")
@@ -192,6 +210,7 @@ def run(path = "prof_examples//simu-mdp.mdp", return_printer = False, print_tran
         print('---------- States attributes -----------')
         print(f"First state: {printer.first_state}")
         print(f"Declared states: {printer.declared_states}")
+        print(f"Rewards: {printer.rewards}")
 
     if return_printer:
         return printer
