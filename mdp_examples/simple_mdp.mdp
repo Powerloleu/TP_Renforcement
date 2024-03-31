@@ -1,0 +1,7 @@
+States I, W, L;
+Actions a, b, c;
+I[a] -> 1:W + 1:L;
+I[b] -> 1:W;
+I[c] -> 1:L;
+W -> 1:W;
+L -> 1:L;

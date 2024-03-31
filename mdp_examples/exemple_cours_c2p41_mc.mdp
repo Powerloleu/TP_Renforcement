@@ -1,0 +1,10 @@
+States II, CI, AI, CC, CA, AC, AA, F, L;
+Actions NA;
+II -> 2:CI + 1:AI;
+CI -> 1:CC;
+CC -> 1:F + 1:L;
+CA -> 1:F;
+AC -> 1:F;
+AA -> 1:L;
+AI -> 1:AA;
+
