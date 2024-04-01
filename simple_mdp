@@ -1,0 +1,15 @@
+// MDP
+digraph {
+	size="50,50"
+	node [fontsize=12 height=1 shape=circle width=1]
+	edge [fontsize=10 style=solid]
+	I [label=I]
+	L [label=L]
+	W [label=W]
+	I -> W [label="a, 0.50" color=red]
+	I -> L [label="a, 0.50" color=red]
+	I -> W [label="b, 1.00" color=blue]
+	I -> L [label="c, 1.00" color=green]
+	W -> W [label="NA, 1.00" color=purple]
+	L -> L [label="NA, 1.00" color=purple]
+}

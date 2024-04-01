@@ -1,0 +1,24 @@
+// MDP
+digraph {
+	size="50,50"
+	node [fontsize=12 height=1 shape=circle width=1]
+	edge [fontsize=10 style=solid]
+	II [label=II]
+	AC [label=AC]
+	CA [label=CA]
+	CC [label=CC]
+	CI [label=CI]
+	AA [label=AA]
+	F [label=F]
+	AI [label=AI]
+	L [label=L]
+	II -> CI [label="NA, 0.67" color=red]
+	II -> AI [label="NA, 0.33" color=red]
+	CI -> CC [label="NA, 1.00" color=red]
+	CC -> F [label="NA, 0.50" color=red]
+	CC -> L [label="NA, 0.50" color=red]
+	CA -> F [label="NA, 1.00" color=red]
+	AC -> F [label="NA, 1.00" color=red]
+	AA -> L [label="NA, 1.00" color=red]
+	AI -> AA [label="NA, 1.00" color=red]
+}

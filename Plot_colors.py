@@ -3,8 +3,11 @@ import pandas as pd
 from graphviz import Digraph
 import numpy as np
 import random
-
-printer = run_mdp(path = "prof_examples//simu-mc.mdp", return_printer=True, print_transactions=True)
+"""
+In order to run this script, besides installing graphviz with Git, you must 
+download Graphviz and add its executable to your system path variables.
+"""
+printer = run_mdp(path = "mdp_examples//craps.mdp", return_printer=True, print_transactions=True)
 
 df = printer.transactions_prob
 
@@ -54,4 +57,5 @@ for index, row in df.iterrows():
             dot.edge(origin, destination, label=label, color=color)
 
 # Renderiza e visualiza o gráfico
-dot.render('mdp_graph_colored', view=True)
+dot.render('craps', view=True)
+

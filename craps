@@ -1,0 +1,26 @@
+// MDP
+digraph {
+	size="50,50"
+	node [fontsize=12 height=1 shape=circle width=1]
+	edge [fontsize=10 style=solid]
+	P59 [label=P59]
+	P [label=P]
+	I [label=I]
+	G [label=G]
+	P410 [label=P410]
+	P68 [label=P68]
+	I -> P410 [label="NA, 0.17" color=red]
+	I -> P59 [label="NA, 0.22" color=red]
+	I -> P68 [label="NA, 0.28" color=red]
+	I -> P [label="NA, 0.11" color=red]
+	I -> G [label="NA, 0.22" color=red]
+	P410 -> P410 [label="NA, 0.75" color=red]
+	P410 -> P [label="NA, 0.17" color=red]
+	P410 -> G [label="NA, 0.08" color=red]
+	P59 -> P59 [label="NA, 0.72" color=red]
+	P59 -> P [label="NA, 0.17" color=red]
+	P59 -> G [label="NA, 0.11" color=red]
+	P68 -> P68 [label="NA, 0.69" color=red]
+	P68 -> P [label="NA, 0.17" color=red]
+	P68 -> G [label="NA, 0.14" color=red]
+}
